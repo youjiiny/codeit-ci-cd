@@ -16,7 +16,7 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [18, 20]
+        node-version: [18.x, 20.x]
         # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
 
     steps:
@@ -25,12 +25,12 @@ jobs:
       uses: actions/setup-node@v4
       with:
         node-version: ${{ matrix.node-version }}
-        cache: 'npm'    
+        cache: 'yarn'    
     - name: 📥 Install dependencies
-      run: npm ci 
+      run: yarn --frozen-lockfile
     - name: ▶️ Run build script
-      run: npm run build
+      run: yarn build
+    - name: 🛠️ Build the project
+      run: yarn build --if-present
     - name: ▶️ Run test script
-      run: npm run test
-    - run: npm run build --if-present
-    - run: npm test
+      run: yarn test
