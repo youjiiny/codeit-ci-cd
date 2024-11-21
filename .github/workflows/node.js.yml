@@ -16,7 +16,7 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [18, 20]
+        node-version: [18.x, 20.x]
         # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
 
     steps:
@@ -28,9 +28,14 @@ jobs:
         cache: 'npm'    
     - name: 📥 Install dependencies
       run: npm ci 
-    - name: ▶️ Run build script
+    - name: ▶️ Run build
       run: npm run build
-    - name: ▶️ Run test script
-      run: npm run test
-    - run: npm run build --if-present
-    - run: npm test
+    - name: ▶️ Run tests and generate coverage reports
+      run: npm run test -- --coverage
+    - name: Upload coverage reports to Codecov
+      run: |
+        # Replace `linux` below with the appropriate OS
+        # Options are `alpine`, `linux`, `macos`, `windows`
+        curl -Os https://cli.codecov.io/latest/linux/codecov
+        chmod +x codecov
+        ./codecov --verbose upload-process --fail-on-error -t ${{ secrets.CODECOV_TOKEN }} -n 'service'-${{ github.run_id }} -F service -f coverage-service.xml
